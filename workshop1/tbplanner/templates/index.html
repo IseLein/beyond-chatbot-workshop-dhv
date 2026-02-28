@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TBPlanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <main class="layout">
+      <section class="planner-panel">
+        <header class="panel-header">
+          <h1>TBPlanner</h1>
+          <p>Manual calendar + AI event assistant</p>
+        </header>
+
+        <div class="calendar-card">
+          <div class="calendar-topbar">
+            <button id="prev-month" type="button">&lt;</button>
+            <h2 id="month-label"></h2>
+            <button id="next-month" type="button">&gt;</button>
+          </div>
+
+          <div class="weekdays">
+            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+          </div>
+          <div id="calendar-grid" class="calendar-grid"></div>
+        </div>
+
+        <div class="events-card">
+          <h3 id="selected-date-label"></h3>
+
+          <form id="add-event-form" class="event-form">
+            <input id="event-title" name="title" type="text" placeholder="Event title" required />
+            <input id="event-time" name="time" type="time" />
+            <button type="submit">Add Event</button>
+          </form>
+
+          <ul id="events-list" class="events-list"></ul>
+        </div>
+      </section>
+
+      <section class="chat-panel">
+        <header class="panel-header">
+          <div class="chat-header-row">
+            <div>
+              <h2>Chat Assistant</h2>
+              <p>Ask to add, list, or remove events</p>
+            </div>
+            <div id="chat-status" class="chat-status idle" aria-live="polite">
+              <span class="status-dot"></span>
+              <span id="chat-status-text">Ready</span>
+            </div>
+          </div>
+        </header>
+
+        <div id="chat-log" class="chat-log"></div>
+
+        <form id="chat-form" class="chat-form">
+          <input id="chat-input" type="text" placeholder="e.g. Add team sync tomorrow at 10:00" required />
+          <button id="chat-send" type="submit">Send</button>
+        </form>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
