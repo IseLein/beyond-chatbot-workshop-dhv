@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multimodal Upload Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Multimodal Upload Analyzer</h1>
+      <p class="subtitle">
+        Upload image/video/document files and get structured JSON analysis through OpenRouter.
+      </p>
+
+      <section class="panel">
+        <form id="analyze-form">
+          <label>
+            Model
+            <input type="text" id="model" name="model" value="{{ default_model }}" />
+          </label>
+
+          <label>
+            Prompt (optional)
+            <textarea id="prompt" name="prompt" rows="3" placeholder="What should the model focus on?"></textarea>
+          </label>
+
+          <label>
+            Files (max {{ max_inline_mb }} MB each)
+            <input type="file" id="files" name="files" multiple required />
+          </label>
+
+          <button type="submit" id="submit-btn">Analyze</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>Image Preview</h2>
+        <div id="image-preview" class="image-preview-empty">No image selected.</div>
+      </section>
+
+      <section class="panel">
+        <h2>Summary</h2>
+        <div id="summary" class="summary-block">No result yet.</div>
+      </section>
+
+      <section class="panel">
+        <h2>Status</h2>
+        <pre id="status">Idle</pre>
+      </section>
+
+      <section class="panel">
+        <h2>Parsed JSON</h2>
+        <pre id="parsed">No result yet.</pre>
+      </section>
+
+      <section class="panel">
+        <h2>Raw Model Output</h2>
+        <pre id="raw">No result yet.</pre>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>

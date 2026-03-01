@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vision Agent</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>Vision Agent</h1>
+        <p>OpenCV camera loop + OpenRouter tool-calling snapshot trigger.</p>
+      </header>
+
+      <section class="panel controls">
+        <div class="row">
+          <label>
+            Model
+            <input id="model" type="text" value="{{ status.model }}" />
+          </label>
+          <button id="apply-model">Apply Model</button>
+          <button id="start">Start Camera</button>
+          <button id="stop" class="danger">Stop</button>
+        </div>
+
+        <div class="row">
+          <label>
+            Analysis Interval (ms)
+            <input id="analysis-interval" type="number" min="250" max="10000" value="{{ status.analysis_interval_ms }}" />
+          </label>
+          <label>
+            Confidence Threshold
+            <input id="confidence-threshold" type="number" min="0" max="1" step="0.01" value="{{ status.confidence_threshold }}" />
+          </label>
+          <label>
+            Cooldown (sec)
+            <input id="cooldown-seconds" type="number" min="0" max="300" step="0.5" value="{{ status.cooldown_seconds }}" />
+          </label>
+          <button id="save-config">Save Config</button>
+        </div>
+      </section>
+
+      <section class="panel feed-panel">
+        <div>
+          <h2>Live Feed</h2>
+          <img id="feed" src="" alt="Camera feed" />
+        </div>
+        <div>
+          <h2>Live Analysis</h2>
+          <div class="analysis-cards">
+            <div class="analysis-card">
+              <span class="label">Phone Detected</span>
+              <span id="phone-detected" class="pill pill-neutral">Unknown</span>
+            </div>
+            <div class="analysis-card">
+              <span class="label">Confidence</span>
+              <span id="confidence" class="value">-</span>
+            </div>
+            <div class="analysis-card">
+              <span class="label">Action</span>
+              <span id="action" class="value">-</span>
+            </div>
+            <div class="analysis-card">
+              <span class="label">Reason</span>
+              <span id="reason" class="value">-</span>
+            </div>
+          </div>
+          <div class="observation-block">
+            <span class="label">Observation</span>
+            <p id="observation">No analysis yet.</p>
+          </div>
+          <div class="health-row">
+            <span id="feed-health">Feed: idle</span>
+            <span id="latency">Latency: -</span>
+          </div>
+        </div>
+        <div>
+          <h2>Agent Status</h2>
+          <pre id="status-json">Loading...</pre>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Recent Events</h2>
+        <div id="events"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Recent Snapshots</h2>
+        <div id="snapshots" class="snapshots"></div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
