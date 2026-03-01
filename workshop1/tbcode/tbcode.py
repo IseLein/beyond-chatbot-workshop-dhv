@@ -78,6 +78,44 @@ def tool_edit_file(path: str, content: str) -> str:
     return f"Wrote {len(content)} characters to {path}"
 
 
+def tool_parse_pdf(path: str) -> str:
+    """Extract text from a PDF file."""
+    try:
+        import fitz  # pymupdf
+    except ImportError:
+        return "Error: pymupdf is not installed. Run: pip install pymupdf"
+
+    file_path = resolve_path(path)
+    if not file_path.exists():
+        return f"File not found: {path}"
+    if file_path.is_dir():
+        return f"Path is a directory, not a file: {path}"
+    if file_path.suffix.lower() != ".pdf":
+        return f"File is not a PDF: {path}"
+
+    try:
+        doc = fitz.open(file_path)
+        text_parts: list[str] = []
+        for page_num, page in enumerate(doc, start=1):
+            text = page.get_text()
+            if text.strip():
+                text_parts.append(f"--- Page {page_num} ---\n{text}")
+        doc.close()
+
+        full_text = "\n\n".join(text_parts)
+        if not full_text.strip():
+            return "No text content found in PDF."
+
+        # Limit output size
+        max_chars = 50000
+        if len(full_text) > max_chars:
+            full_text = full_text[:max_chars] + f"\n\n... [truncated, {len(full_text) - max_chars} more characters]"
+
+        return full_text
+    except Exception as e:
+        return f"Error parsing PDF: {e}"
+
+
 def run_agent(client: OpenAI, user_request: str, model: str) -> str:
     tools = [
         {
@@ -134,12 +172,30 @@ def run_agent(client: OpenAI, user_request: str, model: str) -> str:
                 },
             },
         },
+        {
+            "type": "function",
+            "function": {
+                "name": "parse_pdf",
+                "description": "Extract and read text content from a PDF file.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "path": {
+                            "type": "string",
+                            "description": "Relative path to the PDF file.",
+                        }
+                    },
+                    "required": ["path"],
+                },
+            },
+        },
     ]
 
     tool_map: dict[str, Callable[..., str]] = {
         "list_files": tool_list_files,
         "read_file": tool_read_file,
         "edit_file": tool_edit_file,
+        "parse_pdf": tool_parse_pdf,
     }
 
     messages: list[dict] = [
@@ -153,7 +209,7 @@ def run_agent(client: OpenAI, user_request: str, model: str) -> str:
         {"role": "user", "content": user_request},
     ]
 
-    for _ in range(20):
+    for _ in range(100):
         response = client.chat.completions.create(
             model=model,
             messages=messages,
@@ -211,7 +267,7 @@ def run_agent(client: OpenAI, user_request: str, model: str) -> str:
 
 def main() -> None:
     client = build_client()
-    model = os.getenv("MODEL", "openai/gpt-oss-120b:free")
+    model = os.getenv("MODEL", "moonshotai/kimi-k2.5")
 
     print("TBCode started. Enter coding requests. Type 'exit' to quit.")
     print(f"Workspace root: {WORKSPACE_ROOT}")

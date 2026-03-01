@@ -18,7 +18,8 @@ def build_client() -> OpenAI:
 
 def main() -> None:
     client = build_client()
-    model = os.getenv("MODEL", "openai/gpt-oss-120b:free")
+    # model = os.getenv("MODEL", "openai/gpt-oss-120b:free")
+    model = os.getenv("MODEL", "moonshotai/kimi-k2.5")
 
     print("CLI Chat started. Type 'exit' to quit.")
 
